@@ -34,7 +34,7 @@ class Crossover:
 
         return child
 
-    def crossover_population(self, parents, crossover_rate=0.8):
+    def crossover_population(self, parents, crossover_rate=0.1):
         """
         Realizează crossover asupra întregii populații.
 
@@ -49,12 +49,19 @@ class Crossover:
             parent1 = parents[i]
             parent2 = parents[(i + 1) % population_size]  # În caz că avem un număr impar de părinți
 
+            # Verificăm dacă părintele 1 și părintele 2 sunt diferiți
+            if parent1 == parent2:
+                # Dacă părintele 1 este identic cu părintele 2, alegem un alt părinte
+                print("Ales aceiași părinți, alegem un alt părinte pentru crossover.")
+                parent2 = parents[(i + 2) % population_size]  # Alegem alt părinte
+
             if random.random() < crossover_rate:
                 child = self.order_crossover(parent1, parent2)
                 children.append(child)
             else:
                 # Fără crossover, copiem părintele direct
                 children.append(parent1)
-                children.append(parent2)
+                if i + 1 < population_size:  # Verificăm că există un al doilea părinte
+                    children.append(parent2)
 
         return children
