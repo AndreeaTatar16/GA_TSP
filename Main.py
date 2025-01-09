@@ -22,7 +22,7 @@ class Main:
         self.population = self.initialize_population()
 
         # Creăm instanța de selecție
-        self.selection = Selection(self.population, self.fitness_function, tournament_size=4)
+        self.selection = Selection(self.population, self.fitness_function, tournament_size=4, coordinates=self.tsp_data.get_coordinates())
 
         # Creăm instanța de crossover
         self.crossover = Crossover()
@@ -88,8 +88,16 @@ class Main:
             for parent in parents:
                 print(f"Individ: {parent} - Distanță: {self.fitness_function(parent)}")
 
+            # Aplicăm 2-opt pe părinți pentru a îmbunătăți soluțiile
+            improved_parents = [self.selection.two_opt(parent) for parent in parents]
+
+            # Afișăm părinții după aplicarea 2-opt
+            print("Părinți îmbunătățiți cu 2-opt: ")
+            for parent in improved_parents:
+                print(f"Individ: {parent} - Distanță: {self.fitness_function(parent)}")
+
             # Aplicați operatorul de crossover pentru a crea copii din părinți
-            children = self.crossover.crossover_population(parents)
+            children = self.crossover.crossover_population(improved_parents)
 
             # Aplicăm mutația pentru fiecare copil
             mutated_children = [self.mutation.mutate(child) for child in children]
@@ -152,7 +160,6 @@ class Main:
 
         :param generations: Numărul de generații pentru evoluție
         """
-
         print("Testare selecție înainte de evoluție:")
         self.test_selection(self.selection)
 
