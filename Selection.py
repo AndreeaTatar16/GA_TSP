@@ -1,8 +1,7 @@
 import random
 
-
 class Selection:
-    def __init__(self, population, fitness_function, tournament_size=5):
+    def __init__(self, population, fitness_function, tournament_size):
         """
         Inițializează clasa de selecție.
 
@@ -24,7 +23,7 @@ class Selection:
         tournament = random.sample(self.population, self.tournament_size)
 
         # Sortăm turneul după fitness (mai bine este mai mică distanța pentru TSP)
-        tournament_sorted = sorted(tournament, key=self.fitness_function, reverse=True)
+        tournament_sorted = sorted(tournament, key=self.fitness_function, reverse=False)  # corectăm ordinea
 
         # Returnăm primii doi părinți din turneu
         parent1 = tournament_sorted[0]
@@ -46,3 +45,4 @@ class Selection:
             parents.append(parent2)
 
         return parents
+
