@@ -3,6 +3,8 @@ import numpy as np
 from Selection import Selection
 from Crossover import Crossover  # Importăm clasa Crossover
 from TSP_Data import TSPData
+from Mutation import Mutation  # Importăm clasa Mutation
+
 
 class Main:
     def __init__(self, tsp_data_file):
@@ -15,7 +17,7 @@ class Main:
         self.tsp_data = TSPData(tsp_data_file)
 
         # Inițializăm populația
-        self.population_size = 100  # Mărimea populației
+        self.population_size = 1000  # Mărimea populației
         self.population = self.initialize_population()
 
         # Creăm instanța de selecție
@@ -23,6 +25,9 @@ class Main:
 
         # Creăm instanța de crossover
         self.crossover = Crossover()
+
+        # Creăm instanța de mutație
+        self.mutation = Mutation(mutation_rate=0.5)  # 50% șanse de mutație
 
     def initialize_population(self):
         """
@@ -61,14 +66,14 @@ class Main:
         total_distance += self.tsp_data.get_distance(solution[-1], solution[0])  # Întoarcerea la început
         return total_distance
 
-    def evolve(self, generations=100):
+    def evolve(self, generations=200):
         """
         Execută algoritmul evoluționar pentru un anumit număr de generații.
 
         :param generations: Numărul de generații pentru evoluție
         """
         for generation in range(generations):
-            print(f"\nGenerația {generation + 1} - Selecție părinți:")
+            print(f"\nGenerația {generation + 1} - Evoluție:")
 
             # Selectăm părinții pentru a forma noi soluții
             parents = self.selection.select_population(2)
@@ -81,20 +86,23 @@ class Main:
             # Aplicați operatorul de crossover pentru a crea copii din părinți
             children = self.crossover.crossover_population(parents)
 
-            # Afișăm copiii creați
-            print("Copii creați prin crossover: ")
-            for child in children:
+            # Aplicăm mutația asupra copiilor
+            mutated_children = [self.mutation.mutate(child) for child in children]
+
+            # Afișăm copiii creați după mutație
+            print("Copii după mutație: ")
+            for child in mutated_children:
                 print(f"Individ: {child} - Distanță: {self.fitness_function(child)}")
 
             # Înlocuirea populației cu noii copii
-            self.population = children
+            self.population = mutated_children
 
             # Afișăm fitness-ul pentru fiecare generație (pentru a urmări progresul)
             best_solution = min(self.population, key=self.fitness_function)
             best_fitness = self.fitness_function(best_solution)
             print(f"Generația {generation + 1} - Best fitness: {best_fitness}")
 
-    def run(self, generations=100):
+    def run(self, generations=200):
         """
         Rulează algoritmul evoluționar.
 
@@ -112,4 +120,4 @@ if __name__ == "__main__":
 
     # Inițializăm și rulăm algoritmul
     main_algorithm = Main(tsp_data_file)
-    main_algorithm.run(generations=100)
+    main_algorithm.run(generations=200)
