@@ -1,12 +1,11 @@
 import random
 
-
 class Mutation:
-    def __init__(self, mutation_rate=0.1):
+    def __init__(self, mutation_rate=0.5):
         """
         Inițializează clasa pentru mutație.
 
-        :param mutation_rate: Probabilitatea de mutație (implicit 10%).
+        :param mutation_rate: Probabilitatea de mutație (implicit 50%).
         """
         self.mutation_rate = mutation_rate
 
@@ -23,3 +22,13 @@ class Mutation:
             # Inversăm subsecvența dintre cele două indici
             solution[idx1:idx2 + 1] = reversed(solution[idx1:idx2 + 1])
         return solution
+
+    def mutate_population(self, population):
+        """
+        Aplică mutația asupra întregii populații.
+
+        :param population: Lista de soluții (copii) din populație.
+        :return: Populația cu soluțiile mutate.
+        """
+        # Aplica mutația asupra fiecărui copil din populație
+        return [self.mutate(child) for child in population]
